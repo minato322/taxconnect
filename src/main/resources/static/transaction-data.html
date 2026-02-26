@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>海舟智税云 - 交易数据</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .app-header {
+      background: #1976d2;
+      color: white;
+      padding: 16px 16px 12px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #1976d2;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #1976d2;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 12px 0;
+      text-decoration: none;
+      border: none;
+      font-size: 16px;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #1976d2;
+      color: #1976d2;
+    }
+    .list-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+    .list-item:last-child {
+      border-bottom: none;
+    }
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      height: 56px;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #888;
+      text-decoration: none;
+      padding: 4px 0;
+    }
+    .tab-item.active {
+      color: #1976d2;
+    }
+    .tab-item i {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    /* 交易数据表格样式 */
+    .data-summary {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .summary-item {
+      text-align: center;
+      padding: 12px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      flex: 1;
+      margin: 0 4px;
+    }
+    .summary-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    .summary-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .transaction-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    .transaction-table th {
+      background: #f0f8ff;
+      text-align: left;
+      padding: 10px 8px;
+      font-size: 12px;
+      color: #1976d2;
+      font-weight: 600;
+    }
+    .transaction-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+    .transaction-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .amount {
+      font-weight: 600;
+      color: #e91e63;
+    }
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-settled {
+      background: #e8f5e9;
+      color: #4caf50;
+    }
+    
+    /* 筛选和搜索 */
+    .filter-container {
+      display: flex;
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+    .filter-select {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+    }
+    .search-input {
+      flex: 2;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    /* 分页 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .pagination button {
+      padding: 8px 12px;
+      margin: 0 4px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .pagination button.active {
+      background: #1976d2;
+      color: white;
+      border-color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-header">广州原锦科技交易数据</div>
+  
+  <div class="app-container">
+    <!-- 数据概览 -->
+    <div class="card">
+      <div class="card-title">交易概览</div>
+      <div class="data-summary">
+        <div class="summary-item">
+          <div class="summary-value">10</div>
+          <div class="summary-label">总交易数</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value">USD 764.26</div>
+          <div class="summary-label">总交易额</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value">5</div>
+          <div class="summary-label">不同支付方式</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 筛选和搜索 -->
+    <div class="card">
+      <div class="filter-container">
+        <select class="filter-select" id="dateFilter">
+          <option value="all">全部日期</option>
+          <option value="oct">2025年10月</option>
+          <option value="nov">2025年11月</option>
+          <option value="dec">2025年12月</option>
+        </select>
+        <select class="filter-select" id="paymentFilter">
+          <option value="all">全部支付方式</option>
+          <option value="PAYCARD">PAYCARD</option>
+          <option value="PAYPAI">PAYPAI</option>
+          <option value="INVOICE_WALLET">INVOICE_WALLET</option>
+          <option value="GC_REAL_TIME_BANK_TRANSFER">GC_REAL_TIME_BANK_TRANSFER</option>
+        </select>
+      </div>
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索买家、订单号...">
+    </div>
+    
+    <!-- 交易数据表格 -->
+    <div class="card">
+      <div class="card-title">交易记录</div>
+      <div style="overflow-x: auto;">
+        <table class="transaction-table">
+          <thead>
+            <tr>
+              <th>日期</th>
+              <th>金额</th>
+              <th>订单号</th>
+              <th>买家</th>
+              <th>支付方式</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTable">
+            <!-- 交易数据将通过JavaScript动态加载 -->
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination">
+        <!-- 分页按钮将通过JavaScript动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <a href="index.html" class="tab-item"><i>🏠🏠</i>首页</a>
+    <a href="resources.html" class="tab-item"><i>📚📚</i>资源</a>
+    <a href="support.html" class="tab-item"><i>❓❓</i>支持</a>
+    <a href="user.html" class="tab-item"><i>👤👤</i>我的</a>
+  </div>
+
+  <script>
+    // 交易数据
+    const transactionData = [
+      {
+        date: "2025-10-28",
+        amount: "USD 160.00",
+        orderNo: "2803899950010254D7",
+        buyer: "Mary McRride Reasley",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-11-03",
+        amount: "USD 95.40",
+        orderNo: "280/0413550102//87",
+        buyer: "Zach Fackrell",
+        paymentMethod: "PAYPAI",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-04",
+        amount: "USD 6.52",
+        orderNo: "264113403501021473",
+        buyer: "Caleb Lwamba",
+        paymentMethod: "INVOICE_WALLET",
+        status: "SETTLED BY_MERCHANT"
+      },
+      {
+        date: "2025-12-11",
+        amount: "USD 260.00",
+        orderNo: "285076513001022696",
+        buyer: "Stephen Wen",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-12",
+        amount: "USD 104.07",
+        orderNo: "15482732501041638",
+        buyer: "Petronella B",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2025-12-11",
+        amount: "USD 21.50",
+        orderNo: "15525588501049858",
+        buyer: "stan stewart",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-17",
+        amount: "USD 43.75",
+        orderNo: "285443615501021554",
+        buyer: "jacky musaga",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2025-12-21",
+        amount: "USD 16.20",
+        orderNo: "286429530501020076",
+        buyer: "Morasil Rasil",
+        paymentMethod: "GC_REAL_TIME_BANK_TRANSFER",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2025-12-25",
+        amount: "USD 42.00",
+        orderNo: "N/A",
+        buyer: "Sublime Campany",
+        paymentMethod: "INVOICE_WALLET",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-26",
+        amount: "USD 4.32",
+        orderNo: "286448675001020586",
+        buyer: "Sublime Campany",
+        paymentMethod: "INVOICE WALLET",
+        status: "SETTLED_BY_MERCHANT"
+      }
+    ];
+
+    // 分页设置
+    const itemsPerPage = 5;
+    let currentPage = 1;
+    let filteredData = [...transactionData];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderTable();
+      setupFilters();
+    });
+
+    // 渲染表格
+    function renderTable() {
+      const tableBody = document.getElementById('transactionTable');
+      const pagination = document.getElementById('pagination');
+      
+      // 清空表格
+      tableBody.innerHTML = '';
+      pagination.innerHTML = '';
+      
+      // 计算分页
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+      const pageData = filteredData.slice(startIndex, endIndex);
+      
+      // 填充表格数据
+      pageData.forEach(transaction => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>${transaction.date}</td>
+          <td class="amount">${transaction.amount}</td>
+          <td>${transaction.orderNo}</td>
+          <td>${transaction.buyer}</td>
+          <td>${transaction.paymentMethod}</td>
+          <td><span class="status status-settled">${transaction.status}</span></td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // 生成分页按钮
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      
+      if (totalPages > 1) {
+        // 上一页按钮
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '‹';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+          }
+        });
+        pagination.appendChild(prevButton);
+        
+        // 页码按钮
+        for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.textContent = i;
+          pageButton.className = i === currentPage ? 'active' : '';
+          pageButton.addEventListener('click', () => {
+            currentPage = i;
+            renderTable();
+          });
+          pagination.appendChild(pageButton);
+        }
+        
+        // 下一页按钮
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '›';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+          }
+        });
+        pagination.appendChild(nextButton);
+      }
+    }
+
+    // 设置筛选功能
+    function setupFilters() {
+      const dateFilter = document.getElementById('dateFilter');
+      const paymentFilter = document.getElementById('paymentFilter');
+      const searchInput = document.getElementById('searchInput');
+      
+      // 日期筛选
+      dateFilter.addEventListener('change', function() {
+        applyFilters();
+      });
+      
+      // 支付方式筛选
+      paymentFilter.addEventListener('change', function() {
+        applyFilters();
+      });
+      
+      // 搜索
+      searchInput.addEventListener('input', function() {
+        applyFilters();
+      });
+    }
+
+    // 应用筛选条件
+    function applyFilters() {
+      const dateFilter = document.getElementById('dateFilter').value;
+      const paymentFilter = document.getElementById('paymentFilter').value;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      filteredData = transactionData.filter(transaction => {
+        // 日期筛选
+        if (dateFilter !== 'all') {
+          const month = transaction.date.split('-')[1];
+          if (dateFilter === 'oct' && month !== '10') return false;
+          if (dateFilter === 'nov' && month !== '11') return false;
+          if (dateFilter === 'dec' && month !== '12') return false;
+        }
+        
+        // 支付方式筛选
+        if (paymentFilter !== 'all' && transaction.paymentMethod !== paymentFilter) {
+          return false;
+        }
+        
+        // 搜索筛选
+        if (searchTerm && 
+            !transaction.buyer.toLowerCase().includes(searchTerm) && 
+            !transaction.orderNo.toLowerCase().includes(searchTerm)) {
+          return false;
+        }
+        
+        return true;
+      });
+      
+      // 重置到第一页
+      currentPage = 1;
+      renderTable();
+    }
+  </script>
+</body>
+</html>

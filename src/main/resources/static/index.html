@@ -143,7 +143,7 @@
     .service-item:hover {
       background: #e6f2ff;
     }
-    /* ✅ 修复：弹窗初始状态为隐藏 */
+    /* 弹窗样式 */
     .modal {
       position: fixed;
       top: 0;
@@ -251,10 +251,10 @@
   
   <!-- Logo区域 -->
   <div class="logo-container">
-    <img src="logo.png" alt="海舟智税云Logo" class="logo">
+    
   </div>
 
-  <!-- ✅ 修复：弹窗初始隐藏 -->
+  <!-- 弹窗 -->
   <div class="modal" id="introModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -292,14 +292,15 @@
       </a>
     </div>
 
-    <!-- 快捷服务 -->
+    <!-- 快捷服务（已添加交易数据入口） -->
     <div class="card">
       <div class="card-title">快捷服务</div>
       <div class="service-grid">
-        <a href="exchange.html" class="service-item">💱 汇率转换</a>
-        <a href="chat.html" class="service-item">💬 在线客服</a>
-        <a href="resources.html" class="service-item">📚 政策资源</a>
-        <a href="support.html" class="service-item">❓ 技术支持</a>
+        <a href="exchange.html" class="service-item">💱💱 汇率转换</a>
+        <a href="chat.html" class="service-item">💬💬 在线客服</a>
+        <a href="transaction-data.html" class="service-item">📊📊 交易数据</a>
+        <a href="resources.html" class="service-item">📚📚 政策资源</a>
+        <a href="support.html" class="service-item">❓❓ 技术支持</a>
       </div>
     </div>
 
@@ -324,23 +325,16 @@
     <a href="login.html" class="tab-item"><i>👤</i>我的</a>
   </div>
 
-  <!-- ✅ 修复：关键逻辑 - 使用 sessionStorage 代替 localStorage -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const modal = document.getElementById('introModal');
       const closeBtn = document.getElementById('modalClose');
       
-      // ✅ 关键修复：使用 sessionStorage（浏览器关闭后自动清除）
       const hasShown = sessionStorage.getItem('introModalShown');
       
-      console.log('[DEBUG] 弹窗状态:', hasShown ? '已显示过（当前会话）' : '首次访问（当前会话）');
-      
-      // 仅在当前浏览器会话首次访问时显示
       if (!hasShown) {
-        console.log('[DEBUG] 显示弹窗（新会话）');
         modal.classList.add('show');
         
-        // 3秒后自动关闭
         setTimeout(() => {
           closeModal();
         }, 3000);
@@ -348,8 +342,7 @@
 
       function closeModal() {
         modal.classList.remove('show');
-        sessionStorage.setItem('introModalShown', 'true'); // 标记已显示（当前会话）
-        console.log('[DEBUG] 弹窗已关闭，状态记录为 true（当前会话）');
+        sessionStorage.setItem('introModalShown', 'true');
       }
 
       closeBtn.addEventListener('click', closeModal);
