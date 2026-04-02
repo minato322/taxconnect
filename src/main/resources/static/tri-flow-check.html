@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>海舟智税云 - 三流合一校验</title>
+  <style>
+    /* 全局样式 */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+    body { background-color: #f5f7fa; color: #333; line-height: 1.6; }
+    .app-header { background: #1976d2; color: white; padding: 16px; text-align: center; font-size: 18px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+    .app-container { max-width: 500px; margin: 0 auto; padding: 16px; }
+    
+    /* 卡片样式 */
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1976d2; }
+    
+    /* 按钮样式 */
+    .btn { display: block; width: 100%; padding: 14px; background: #1976d2; color: white; text-align: center; border-radius: 8px; font-weight: 600; margin: 12px 0; text-decoration: none; border: none; font-size: 16px; }
+    .btn-success { background: #2e7d32; }
+    .btn-disabled { background: #9e9e9e; cursor: not-allowed; }
+
+    /* 状态展示模块 */
+    .status-box { padding: 15px; border-radius: 8px; border-left: 4px solid; margin-bottom: 10px; font-size: 14px; }
+    .status-success { border-color: #4caf50; background-color: #f8fff8; }
+    .status-pending { border-color: #ff9800; background-color: #fffaf2; }
+    .status-info { border-color: #2196f3; background-color: #f2f8ff; }
+
+    /* 底部导航栏 (保持与标准代码一致) */
+    .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); height: 56px; }
+    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #888; text-decoration: none; padding: 4px 0; }
+    .tab-item.active { color: #1976d2; }
+    .tab-item i { font-size: 20px; margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app-header">三流合一校验</div>
+  <div class="app-container">
+    
+    <!-- 校验状态卡片 -->
+    <div class="card">
+      <div class="card-title">📊 核心状态</div>
+      
+      <div class="status-box status-success">
+        <strong>✅ 状态：</strong> 等待触发校验
+      </div>
+      
+      <div class="status-box status-info">
+        <strong>ℹ️ 提示：</strong> 点击下方按钮，启动资金流、信息流、物流穿透比对
+      </div>
+
+      <!-- 校验操作按钮 -->
+      <a href="#" class="btn" id="checkBtn">启动三流合一校验</a>
+      
+      <p style="text-align: center; font-size: 12px; color: #666; margin-top: 8px;">
+        系统将自动关联ERP、支付网关与物流API进行毫秒级比对
+      </p>
+    </div>
+
+    <!-- 校验详情卡片 (模拟结果区域，初始为空) -->
+    <div class="card" id="resultSection" style="display: none;">
+      <div class="card-title">🔍 穿透结果</div>
+      
+      <div class="status-box status-success">
+        <strong>资金流：</strong> <span style="float: right;">匹配 (USD 194.42)</span>
+      </div>
+      
+      <div class="status-box status-success">
+        <strong>信息流：</strong> <span style="float: right;">一致 (6笔订单)</span>
+      </div>
+      
+      <div class="status-box status-success">
+        <strong>物流单：</strong> <span style="float: right;">已关联 (6/6)</span>
+      </div>
+
+      <a href="#" class="btn btn-success" style="margin-top: 20px;">
+        生成合规校验报告
+      </a>
+    </div>
+
+    <!-- 底部说明 -->
+    <div class="card" style="padding: 12px; text-align: center; font-size: 12px; color: #666;">
+      <p>💡 零数据录入：本页面通过API实时拉取云端数据，无需人工导入Excel。</p>
+    </div>
+
+  </div>
+
+  <!-- 底部导航栏 (完全复刻标准代码结构) -->
+  <div class="tab-bar">
+    <a href="index.html" class="tab-item"><i>🏠</i>首页</a>
+    <a href="resources.html" class="tab-item"><i>📚</i>资源</a>
+    <a href="support.html" class="tab-item"><i>❓</i>支持</a>
+    <a href="login.html" class="tab-item active"><i>👤</i>我的</a>
+  </div>
+
+  <script>
+    // 简单的交互逻辑，模拟点击后的状态变化
+    document.getElementById('checkBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      this.textContent = "校验中... (98%)";
+      this.classList.add('btn-disabled');
+      
+      setTimeout(() => {
+        document.getElementById('resultSection').style.display = 'block';
+        document.getElementById('checkBtn').style.display = 'none';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

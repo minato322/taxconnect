@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>海舟智税云 - 区块链存证</title>
+  <style>
+    /* 全局样式 */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+    body { background-color: #f5f7fa; color: #333; line-height: 1.6; }
+    .app-header { background: #1976d2; color: white; padding: 16px; text-align: center; font-size: 18px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+    .app-container { max-width: 500px; margin: 0 auto; padding: 16px; }
+    
+    /* 卡片样式 */
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1976d2; }
+    
+    /* 按钮样式 */
+    .btn { display: block; width: 100%; padding: 14px; background: #1976d2; color: white; text-align: center; border-radius: 8px; font-weight: 600; margin: 12px 0; text-decoration: none; border: none; font-size: 16px; }
+    
+    /* 存证特有样式 */
+    .proof-status { text-align: center; padding: 30px 0; }
+    .proof-icon { 
+      width: 80px; 
+      height: 80px; 
+      background: #e8eaf6; 
+      color: #3f51b5; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 36px; 
+      margin: 0 auto 16px; 
+      box-shadow: 0 4px 12px rgba(63, 81, 181, 0.2);
+    }
+    .status-text { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 8px; }
+    .status-sub { font-size: 13px; color: #666; max-width: 80%; margin: 0 auto; }
+
+    /* 底部导航栏 (保持与标准代码一致) */
+    .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); height: 56px; }
+    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #888; text-decoration: none; padding: 4px 0; }
+    .tab-item.active { color: #1976d2; }
+    .tab-item i { font-size: 20px; margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app-header">区块链存证</div>
+  <div class="app-container">
+    
+    <!-- 存证状态卡片 -->
+    <div class="card">
+      <div class="proof-status">
+        <div class="proof-icon">🔗</div>
+        <div class="status-text">存证服务就绪</div>
+        <div class="status-sub">
+          系统将自动对核心业务数据进行区块链固化，确保数据不可篡改与全链路追踪。
+        </div>
+      </div>
+
+      <a href="#" class="btn">立即查询存证状态</a>
+      <a href="#" class="btn" style="background: white; color: #1976d2; border: 1px solid #1976d2;">查看证据链说明</a>
+    </div>
+
+    <!-- 底部说明 -->
+    <div class="card" style="padding: 12px; text-align: center; font-size: 12px; color: #666;">
+      <p>💡 符合金税四期“穿透式监管”要求，为税务稽查提供可信电子证据。</p>
+    </div>
+
+  </div>
+
+  <!-- 底部导航栏 (完全复刻标准代码结构) -->
+  <div class="tab-bar">
+    <a href="index.html" class="tab-item"><i>🏠</i>首页</a>
+    <a href="resources.html" class="tab-item"><i>📚</i>资源</a>
+    <a href="support.html" class="tab-item"><i>❓</i>支持</a>
+    <a href="login.html" class="tab-item active"><i>👤</i>我的</a>
+  </div>
+
+</body>
+</html>

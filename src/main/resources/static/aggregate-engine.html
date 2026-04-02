@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>海舟智税云 - 订单聚合</title>
+  <style>
+    /* 继承现有样式 */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; }
+    body { background-color: #f5f7fa; color: #333; line-height: 1.6; }
+    .app-header { background: #1976d2; color: white; padding: 16px 16px 12px; text-align: center; font-size: 18px; font-weight: 600; position: sticky; top: 0; z-index: 100; }
+    .app-container { max-width: 500px; margin: 0 auto; padding: 16px; }
+    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1976d2; }
+    .btn { display: block; width: 100%; padding: 14px; background: #1976d2; color: white; text-align: center; border-radius: 8px; font-weight: 600; margin: 12px 0; text-decoration: none; border: none; font-size: 16px; }
+    .btn-success { background: #2e7d32; }
+    .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); height: 56px; }
+    .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: #888; text-decoration: none; padding: 4px 0; }
+    .tab-item.active { color: #1976d2; }
+    .tab-item i { font-size: 20px; margin-bottom: 2px; }
+    a { color: inherit; text-decoration: none; }
+    
+    /* 特有样式：聚合动画效果示意 */
+    .aggregate-flow { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 20px 0; }
+    .flow-item { width: 80%; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; position: relative; transition: all 0.3s; }
+    .raw-orders { background: #ffebee; border: 1px solid #ef9a9a; color: #c62828; }
+    .engine { background: #fff9c4; border: 1px solid #fbc02d; color: #f57f17; font-weight: bold; }
+    .customs-declaration { background: #e8f5e8; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .arrow { font-size: 24px; color: #888; }
+
+    /* 新增：订单列表样式 */
+    .order-list { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+    .order-item { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+    .order-item:last-child { border-bottom: none; }
+    .order-id { font-weight: bold; color: #1976d2; display: block; margin-bottom: 4px; }
+    .order-amount { float: right; color: #d32f2f; font-weight: bold; }
+    .order-status { font-size: 12px; color: #666; display: block; }
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 5px; }
+    .badge-success { background: #e8f5e8; color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <div class="app-header">小额订单聚合</div>
+  <div class="app-container">
+    
+    <!-- 聚合流程演示 -->
+    <div class="card">
+      <div class="card-title">🚀 聚合模拟</div>
+      <div class="aggregate-flow">
+        <div class="flow-item raw-orders">检测到分散订单 (6笔)</div>
+        <div class="arrow">⚙️ 智能引擎处理</div>
+        <div class="flow-item engine">基于 2025-12-03 至 25 日期间聚合</div>
+        <div class="arrow">✅</div>
+        <div class="flow-item customs-declaration">生成汇总清单 [点击查看]</div>
+      </div>
+    </div>
+
+    <!-- 真实数据订单列表 -->
+    <div class="card">
+      <div class="card-title">📋 待聚合订单 (来源：广州原锦科技)</div>
+      <ul class="order-list">
+        <!-- 订单 1 -->
+        <li class="order-item">
+          <span class="order-id">Order: 280704135501027787 <span class="badge badge-success">PayPal</span></span>
+          <span class="order-amount">USD 95.40</span>
+          <span class="order-status">Date: 03-11-2025 | Buyer: Zach Fackrell</span>
+        </li>
+        <!-- 订单 2 -->
+        <li class="order-item">
+          <span class="order-id">Order: 284113403501021473 <span class="badge">Invoice Wallet</span></span>
+          <span class="order-amount">USD 6.52</span>
+          <span class="order-status">Date: 04-12-2025 | Buyer: Caleb Lwamba</span>
+        </li>
+        <!-- 订单 3 -->
+        <li class="order-item">
+          <span class="order-id">Order: 15525588501049858 <span class="badge">PayCard</span></span>
+          <span class="order-amount">USD 21.50</span>
+          <span class="order-status">Date: 14-12-2025 | Buyer: stan stewart</span>
+        </li>
+        <!-- 订单 4 -->
+        <li class="order-item">
+          <span class="order-id">Order: 286429530501020076 <span class="badge">Bank Transfer</span></span>
+          <span class="order-amount">USD 16.20</span>
+          <span class="order-status">Date: 21-12-2025 | Buyer: Morasil Rasil</span>
+        </li>
+        <!-- 订单 5 -->
+        <li class="order-item">
+          <span class="order-id">Order: 286727030001020586 <span class="badge badge-success">Invoice Wallet</span></span>
+          <span class="order-amount">USD 42.00</span>
+          <span class="order-status">Date: 25-12-2025 | Buyer: Sublime Campany</span>
+        </li>
+        <!-- 订单 6 (模拟小额碎片化订单) -->
+        <li class="order-item">
+          <span class="order-id">Order: 286727030001020587 <span class="badge">PayPal</span></span>
+          <span class="order-amount">USD 12.80</span>
+          <span class="order-status">Date: 26-12-2025 | Buyer: Test User</span>
+        </li>
+      </ul>
+      
+      <!-- 聚合操作按钮 -->
+      <a href="#" class="btn">立即聚合选中订单 (Total: USD 194.42)</a>
+      <p style="text-align: center; font-size: 12px; color: #666; margin-top: 8px;">
+        当前已选 6 笔订单，符合海关9610模式申报单元
+      </p>
+    </div>
+
+    <!-- 系统状态 -->
+    <div class="card" style="padding: 12px; text-align: center; font-size: 12px; color: #666;">
+      <p>💡 智能提示：系统已自动识别并过滤非正常状态订单，仅展示“SETTLED_BY_MERCHANT”已结算数据。</p>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <a href="index.html" class="tab-item active"><i>⚙️</i>聚合</a>
+    <a href="tri-flow-check.html" class="tab-item"><i>✓</i>校验</a>
+    <a href="rpa-center.html" class="tab-item"><i>🤖</i>RPA</a>
+    <a href="blockchain-proof.html" class="tab-item"><i>🔗</i>存证</a>
+  </div>
+</body>
+</html>
