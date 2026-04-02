@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>海舟智税云</title>
+  <title>税税通 - 高级财务分析</title>
   <style>
     * {
       margin: 0;
@@ -31,12 +31,13 @@
       max-width: 500px;
       margin: 0 auto;
       padding: 16px;
+      padding-bottom: 70px; /* 为底部导航栏留出空间 */
     }
     .card {
       background: white;
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
     .card-title {
@@ -58,11 +59,25 @@
       text-decoration: none;
       border: none;
       font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #1565c0;
     }
     .btn-outline {
       background: transparent;
       border: 1px solid #1976d2;
       color: #1976d2;
+    }
+    .btn-outline:hover {
+      background: rgba(25, 118, 210, 0.1);
+    }
+    .btn-finance {
+      background: linear-gradient(135deg, #e91e63, #ad1457);
+    }
+    .btn-finance:hover {
+      background: linear-gradient(135deg, #d81b60, #880e4f);
     }
     .list-item {
       padding: 14px 0;
@@ -111,22 +126,476 @@
     li {
       margin: 8px 0;
     }
+    
+    /* 财务分析看板样式 */
+    .dashboard-section {
+      display: none;
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .dashboard-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+    .dashboard-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .date-filter {
+      background: #f5f7fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    
+    /* 水位图样式 */
+    .water-level-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .water-level-item {
+      flex: 1;
+      text-align: center;
+      padding: 0 10px;
+    }
+    .water-level-title {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .water-level-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .water-level-chart {
+      height: 150px;
+      background: #f0f4f8;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .water-level-fill {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      transition: height 1.5s ease;
+    }
+    .water-level-fill.received {
+      background: linear-gradient(to top, #4caf50, #8bc34a);
+    }
+    .water-level-fill.in-transit {
+      background: linear-gradient(to top, #2196f3, #64b5f6);
+    }
+    .water-level-marker {
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.5);
+    }
+    .water-level-label {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    /* 折线图样式 */
+    .line-chart-container {
+      margin: 30px 0;
+    }
+    .line-chart-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .period-selector {
+      display: flex;
+      background: #f5f7fa;
+      border-radius: 20px;
+      padding: 4px;
+    }
+    .period-option {
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .period-option.active {
+      background: #1976d2;
+      color: white;
+    }
+    .line-chart {
+      height: 200px;
+      position: relative;
+    }
+    .chart-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .grid-line {
+      border-top: 1px solid #f0f0f0;
+    }
+    .chart-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .chart-line {
+      fill: none;
+      stroke-width: 3;
+      stroke-linejoin: round;
+    }
+    .chart-point {
+      r: 5;
+      transition: r 0.3s;
+    }
+    .chart-point:hover {
+      r: 8;
+    }
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin: 0 10px;
+      font-size: 12px;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    
+    /* 金融超市样式 */
+    .finance-store {
+      margin-top: 30px;
+    }
+    .finance-card {
+      background: linear-gradient(135deg, #e91e63, #ad1457);
+      border-radius: 12px;
+      padding: 20px;
+      color: white;
+      margin-bottom: 20px;
+    }
+    .finance-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .finance-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+    .finance-features {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .finance-feature {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      margin-bottom: 10px;
+    }
+    .finance-icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    .finance-amount {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .finance-hint {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    /* 模态框样式 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+    .modal-body {
+      margin-bottom: 20px;
+    }
+    .calculation-steps {
+      margin: 20px 0;
+    }
+    .calculation-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e91e63;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-right: 10px;
+    }
+    .step-text {
+      flex: 1;
+    }
+    .calculation-result {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .result-amount {
+      font-size: 28px;
+      font-weight: 600;
+      color: #e91e63;
+      margin: 10px 0;
+    }
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-btn.primary {
+      background: #e91e63;
+      color: white;
+    }
+    .modal-btn.outline {
+      background: transparent;
+      border: 1px solid #e91e63;
+      color: #e91e63;
+    }
   </style>
 </head>
 <body>
   <div class="app-header">高级财务分析</div>
   <div class="app-container">
+    <!-- 服务介绍卡片 -->
     <div class="card">
       <p style="color: #e91e63; font-weight: 600;">定制方案 · 中大型企业专属</p>
       <ul style="margin: 16px 0;">
         <li>🧠 AI财务健康诊断：识别税务风险</li>
         <li>🎯 个性化税务优化：最大化退税收益</li>
-        <li>⛓️ 区块链合规存证：代理出口多方验证</li>
+        <li>⛓ 区块链合规存证：代理出口多方验证</li>
         <li>👨‍💼 专属客户经理：1对1全程服务</li>
         <li>📈 定制报告：支持战略决策</li>
       </ul>
-      <a href="register.html" class="btn">获取定制方案</a>
-      <a href="support.html" class="btn btn-outline">预约咨询</a>
+      <button id="showDashboard" class="btn">财务分析</button>
+      <button id="showFinance" class="btn btn-finance">融资申请</button>
+    </div>
+    
+    <!-- 财务分析看板 -->
+    <div class="dashboard-section" id="dashboardSection">
+      <div class="dashboard-header">
+        <div>
+          <div class="dashboard-title">财务数据看板</div>
+          <div class="dashboard-subtitle">实时监控退税资金状况</div>
+        </div>
+        <select class="date-filter" id="dateFilter">
+          <option value="7">最近7天</option>
+          <option value="30" selected>最近30天</option>
+          <option value="90">最近90天</option>
+        </select>
+      </div>
+      
+      <!-- 动态水位图 -->
+      <div class="water-level-container">
+        <div class="water-level-item">
+          <div class="water-level-title">已到账退税</div>
+          <div class="water-level-value">¥ 248,600</div>
+          <div class="water-level-chart">
+            <div class="water-level-fill received" id="receivedFill" style="height: 75%;">
+              <div class="water-level-label">75%</div>
+              <div class="water-level-marker" style="bottom: 50%;"></div>
+              <div class="water-level-marker" style="bottom: 25%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="water-level-item">
+          <div class="water-level-title">在途退税资金</div>
+          <div class="water-level-value">¥ 82,400</div>
+          <div class="water-level-chart">
+            <div class="water-level-fill in-transit" id="inTransitFill" style="height: 25%;">
+              <div class="water-level-label">25%</div>
+              <div class="water-level-marker" style="bottom: 50%;"></div>
+              <div class="water-level-marker" style="bottom: 25%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 资金周转预测 -->
+      <div class="line-chart-container">
+        <div class="line-chart-title">
+          <span>资金周转预测</span>
+          <div class="period-selector">
+            <div class="period-option" data-days="30">30天</div>
+            <div class="period-option active" data-days="60">60天</div>
+            <div class="period-option" data-days="90">90天</div>
+          </div>
+        </div>
+        <div class="line-chart">
+          <div class="chart-grid">
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+            <div class="grid-line"></div>
+          </div>
+          <svg class="chart-content" id="cashFlowChart"></svg>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #4caf50;"></div>
+            <span>预测收入</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #ff9800;"></div>
+            <span>预测支出</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 金融超市 -->
+    <div class="finance-store" id="financeStore">
+      <div class="finance-card">
+        <div class="finance-title">退税贷额度预估</div>
+        <div class="finance-subtitle">基于区块链存证的真实合规数据计算</div>
+        <div class="finance-features">
+          <div class="finance-feature">
+            <span class="finance-icon">⛓</span>
+            <span>区块链验证</span>
+          </div>
+          <div class="finance-feature">
+            <span class="finance-icon">⚡</span>
+            <span>快速审批</span>
+          </div>
+          <div class="finance-feature">
+            <span class="finance-icon">💰</span>
+            <span>低利率</span>
+          </div>
+        </div>
+        <div class="finance-amount">¥ 500,000</div>
+        <div class="finance-hint">基于您近期的退税数据评估</div>
+      </div>
+      
+      <button id="calculateLoan" class="btn btn-finance">重新计算额度</button>
+      <a href="support.html" class="btn btn-outline">联系客户经理</a>
+    </div>
+  </div>
+
+  <!-- 融资申请模态框 -->
+  <div class="modal-overlay" id="financeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">退税贷额度计算</div>
+        <button class="close-modal" id="closeFinanceModal">×</button>
+      </div>
+      <div class="modal-body">
+        <p>系统将基于区块链存证的真实合规数据，自动计算您的可贷款额度。</p>
+        
+        <div class="calculation-steps">
+          <div class="calculation-step">
+            <div class="step-number">1</div>
+            <div class="step-text">验证企业退税记录</div>
+          </div>
+          <div class="calculation-step">
+            <div class="step-number">2</div>
+            <div class="step-text">分析资金流水数据</div>
+          </div>
+          <div class="calculation-step">
+            <div class="step-number">3</div>
+            <div class="step-text">评估信用风险等级</div>
+          </div>
+          <div class="calculation-step">
+            <div class="step-number">4</div>
+            <div class="step-text">生成额度预估</div>
+          </div>
+        </div>
+        
+        <div class="calculation-result">
+          <div>您的预估贷款额度</div>
+          <div class="result-amount" id="loanAmount">¥ 500,000</div>
+          <div>基于区块链验证的退税数据</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn outline" id="cancelLoan">取消</button>
+        <button class="modal-btn primary" id="applyLoan">立即申请</button>
+      </div>
     </div>
   </div>
 
@@ -136,5 +605,204 @@
     <a href="support.html" class="tab-item"><i>❓</i>支持</a>
     <a href="user.html" class="tab-item"><i>👤</i>我的</a>
   </div>
+
+  <script>
+    // 页面元素
+    const dashboardSection = document.getElementById('dashboardSection');
+    const financeStore = document.getElementById('financeStore');
+    const showDashboardBtn = document.getElementById('showDashboard');
+    const showFinanceBtn = document.getElementById('showFinance');
+    const financeModal = document.getElementById('financeModal');
+    const closeFinanceModal = document.getElementById('closeFinanceModal');
+    const calculateLoanBtn = document.getElementById('calculateLoan');
+    const cancelLoanBtn = document.getElementById('cancelLoan');
+    const applyLoanBtn = document.getElementById('applyLoan');
+    const dateFilter = document.getElementById('dateFilter');
+    const periodOptions = document.querySelectorAll('.period-option');
+    
+    // 初始状态：显示金融超市
+    financeStore.style.display = 'block';
+    
+    // 显示财务分析看板
+    showDashboardBtn.addEventListener('click', function() {
+      dashboardSection.style.display = 'block';
+      financeStore.style.display = 'none';
+      initCharts();
+    });
+    
+    // 显示金融超市
+    showFinanceBtn.addEventListener('click', function() {
+      dashboardSection.style.display = 'none';
+      financeStore.style.display = 'block';
+    });
+    
+    // 打开融资申请模态框
+    calculateLoanBtn.addEventListener('click', function() {
+      financeModal.style.display = 'flex';
+      // 模拟计算过程
+      simulateLoanCalculation();
+    });
+    
+    // 关闭融资申请模态框
+    closeFinanceModal.addEventListener('click', function() {
+      financeModal.style.display = 'none';
+    });
+    
+    cancelLoanBtn.addEventListener('click', function() {
+      financeModal.style.display = 'none';
+    });
+    
+    // 立即申请贷款
+    applyLoanBtn.addEventListener('click', function() {
+      alert('贷款申请已提交，我们的客户经理将在24小时内与您联系！');
+      financeModal.style.display = 'none';
+    });
+    
+    // 模拟贷款计算过程
+    function simulateLoanCalculation() {
+      const loanAmount = document.getElementById('loanAmount');
+      loanAmount.textContent = '计算中...';
+      
+      setTimeout(() => {
+        // 随机生成一个贷款额度（30万-80万）
+        const amount = 300000 + Math.floor(Math.random() * 500000);
+        loanAmount.textContent = '¥ ' + amount.toLocaleString();
+      }, 1500);
+    }
+    
+    // 初始化图表
+    function initCharts() {
+      drawWaterLevelChart();
+      drawCashFlowChart(60); // 默认显示60天预测
+    }
+    
+    // 绘制水位图
+    function drawWaterLevelChart() {
+      // 水位图数据
+      const receivedAmount = 248600; // 已到账退税
+      const inTransitAmount = 82400;  // 在途退税
+      const totalAmount = receivedAmount + inTransitAmount;
+      
+      // 计算百分比
+      const receivedPercent = Math.round((receivedAmount / totalAmount) * 100);
+      const inTransitPercent = 100 - receivedPercent;
+      
+      // 更新水位图
+      document.getElementById('receivedFill').style.height = receivedPercent + '%';
+      document.getElementById('receivedFill').querySelector('.water-level-label').textContent = receivedPercent + '%';
+      
+      document.getElementById('inTransitFill').style.height = inTransitPercent + '%';
+      document.getElementById('inTransitFill').querySelector('.water-level-label').textContent = inTransitPercent + '%';
+    }
+    
+    // 绘制资金周转预测折线图
+    function drawCashFlowChart(days) {
+      const svg = document.getElementById('cashFlowChart');
+      svg.innerHTML = '';
+      
+      const width = svg.clientWidth;
+      const height = svg.clientHeight;
+      const padding = 30;
+      
+      // 生成模拟数据
+      const incomeData = [];
+      const expenseData = [];
+      
+      for (let i = 0; i < days; i += 10) {
+        // 收入数据（逐渐增长）
+        incomeData.push({
+          day: i,
+          value: 50000 + Math.random() * 20000 + i * 500
+        });
+        
+        // 支出数据（相对稳定）
+        expenseData.push({
+          day: i,
+          value: 30000 + Math.random() * 15000
+        });
+      }
+      
+      // 计算最大值用于缩放
+      const allValues = [...incomeData.map(d => d.value), ...expenseData.map(d => d.value)];
+      const maxValue = Math.max(...allValues);
+      
+      // 缩放函数
+      const xScale = (day) => padding + (day / days) * (width - 2 * padding);
+      const yScale = (value) => height - padding - (value / maxValue) * (height - 2 * padding);
+      
+      // 绘制收入折线
+      let incomePath = `M ${xScale(0)} ${yScale(incomeData[0].value)}`;
+      for (let i = 1; i < incomeData.length; i++) {
+        incomePath += ` L ${xScale(incomeData[i].day)} ${yScale(incomeData[i].value)}`;
+      }
+      
+      const incomeLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      incomeLine.setAttribute("d", incomePath);
+      incomeLine.setAttribute("class", "chart-line");
+      incomeLine.setAttribute("stroke", "#4caf50");
+      svg.appendChild(incomeLine);
+      
+      // 绘制收入数据点
+      incomeData.forEach(point => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", xScale(point.day));
+        circle.setAttribute("cy", yScale(point.value));
+        circle.setAttribute("r", 5);
+        circle.setAttribute("class", "chart-point");
+        circle.setAttribute("fill", "#4caf50");
+        svg.appendChild(circle);
+      });
+      
+      // 绘制支出折线
+      let expensePath = `M ${xScale(0)} ${yScale(expenseData[0].value)}`;
+      for (let i = 1; i < expenseData.length; i++) {
+        expensePath += ` L ${xScale(expenseData[i].day)} ${yScale(expenseData[i].value)}`;
+      }
+      
+      const expenseLine = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      expenseLine.setAttribute("d", expensePath);
+      expenseLine.setAttribute("class", "chart-line");
+      expenseLine.setAttribute("stroke", "#ff9800");
+      svg.appendChild(expenseLine);
+      
+      // 绘制支出数据点
+      expenseData.forEach(point => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", xScale(point.day));
+        circle.setAttribute("cy", yScale(point.value));
+        circle.setAttribute("r", 5);
+        circle.setAttribute("class", "chart-point");
+        circle.setAttribute("fill", "#ff9800");
+        svg.appendChild(circle);
+      });
+    }
+    
+    // 日期筛选器事件
+    dateFilter.addEventListener('change', function() {
+      const days = parseInt(this.value);
+      // 这里可以根据选择的天数更新图表数据
+      drawCashFlowChart(days);
+    });
+    
+    // 周期选择器事件
+    periodOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        // 移除所有active类
+        periodOptions.forEach(opt => opt.classList.remove('active'));
+        // 添加active类到当前选项
+        this.classList.add('active');
+        // 获取天数
+        const days = parseInt(this.getAttribute('data-days'));
+        // 重绘图表
+        drawCashFlowChart(days);
+      });
+    });
+    
+    // 页面加载完成后初始化
+    window.addEventListener('load', function() {
+      // 默认显示金融超市
+      financeStore.style.display = 'block';
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>税务申报日历 - 海舟智税云</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .app-header {
+      background: #1976d2;
+      color: white;
+      padding: 16px 16px 12px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 16px;
+      padding-bottom: 70px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #1976d2;
+      display: flex;
+      align-items: center;
+    }
+    .card-title i {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+    .calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .calendar-btn {
+      background: #f0f8ff;
+      border: 1px solid #cce5ff;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: #1976d2;
+      font-weight: 600;
+    }
+    .calendar-btn:hover {
+      background: #e6f2ff;
+    }
+    .calendar-month {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .calendar-weekday {
+      text-align: center;
+      padding: 10px 5px;
+      font-weight: 600;
+      color: #666;
+      font-size: 14px;
+    }
+    .calendar-day {
+      height: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      border: 1px solid transparent;
+    }
+    .calendar-day:hover {
+      background: #f0f8ff;
+      border-color: #cce5ff;
+    }
+    .calendar-day.today {
+      background: #e3f2fd;
+      border-color: #1976d2;
+      font-weight: 600;
+    }
+    .calendar-day.event {
+      position: relative;
+    }
+    .calendar-day.event::after {
+      content: "";
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #4caf50;
+    }
+    .calendar-day.important {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+    .calendar-day.important::after {
+      background: #f44336;
+      width: 6px;
+      height: 6px;
+    }
+    .calendar-day.other-month {
+      color: #ccc;
+    }
+    .event-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 2px;
+    }
+    .event-dot.important {
+      background: #f44336;
+    }
+    .event-dot.normal {
+      background: #4caf50;
+    }
+    .events-list {
+      margin-top: 20px;
+    }
+    .event-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-left: 4px solid #4caf50;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .event-item.important {
+      border-left-color: #f44336;
+      background: #ffebee;
+    }
+    .event-date {
+      width: 50px;
+      text-align: center;
+      margin-right: 15px;
+    }
+    .event-day {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    .event-month {
+      font-size: 12px;
+      color: #666;
+    }
+    .event-info {
+      flex: 1;
+    }
+    .event-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .event-desc {
+      font-size: 12px;
+      color: #666;
+    }
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: white;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      height: 56px;
+    }
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #888;
+      text-decoration: none;
+      padding: 4px 0;
+    }
+    .tab-item.active {
+      color: #1976d2;
+    }
+    .tab-item i {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-header">税务申报日历</div>
+  
+  <div class="app-container">
+    <div class="card">
+      <div class="card-title"><i>📅</i> 2025年税务申报日历</div>
+      
+      <div class="calendar-controls">
+        <div class="calendar-nav">
+          <button class="calendar-btn" id="prevYear">上一年</button>
+          <button class="calendar-btn" id="prevMonth">上个月</button>
+        </div>
+        <div class="calendar-month" id="currentMonthYear">2025年4月</div>
+        <div class="calendar-nav">
+          <button class="calendar-btn" id="nextMonth">下个月</button>
+          <button class="calendar-btn" id="nextYear">下一年</button>
+        </div>
+      </div>
+      
+      <div class="calendar-grid">
+        <div class="calendar-weekday">日</div>
+        <div class="calendar-weekday">一</div>
+        <div class="calendar-weekday">二</div>
+        <div class="calendar-weekday">三</div>
+        <div class="calendar-weekday">四</div>
+        <div class="calendar-weekday">五</div>
+        <div class="calendar-weekday">六</div>
+        
+        <div id="calendarDays"></div>
+      </div>
+      
+      <div class="events-list" id="monthEvents">
+        <div class="event-item important">
+          <div class="event-date">
+            <div class="event-day">15</div>
+            <div class="event-month">4月</div>
+          </div>
+          <div class="event-info">
+            <div class="event-title">增值税申报截止</div>
+            <div class="event-desc">一般纳税人月度申报，请确保在截止日期前完成</div>
+          </div>
+        </div>
+        <div class="event-item">
+          <div class="event-date">
+            <div class="event-day">20</div>
+            <div class="event-month">4月</div>
+          </div>
+          <div class="event-info">
+            <div class="event-title">出口退税申报</div>
+            <div class="event-desc">跨境电商出口退税申报，建议提前准备相关单证</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title"><i>🔔</i> 重要申报节点提醒</div>
+      <div class="event-item important">
+        <div class="event-date">
+          <div class="event-day">15</div>
+          <div class="event-month">每月</div>
+        </div>
+        <div class="event-info">
+          <div class="event-title">增值税申报截止日</div>
+          <div class="event-desc">每月15日前完成增值税申报（遇节假日顺延）</div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date">
+          <div class="event-day">20</div>
+          <div class="event-month">每月</div>
+        </div>
+        <div class="event-info">
+          <div class="event-title">出口退税申报日</div>
+          <div class="event-desc">每月20日前完成出口退税申报</div>
+        </div>
+      </div>
+      <div class="event-item important">
+        <div class="event-date">
+          <div class="event-day">31</div>
+          <div class="event-month">12月</div>
+        </div>
+        <div class="event-info">
+          <div class="event-title">年度汇算清缴</div>
+          <div class="event-desc">年度企业所得税汇算清缴截止日期</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <a href="index.html" class="tab-item"><i>🏠</i>首页</a>
+    <a href="resources.html" class="tab-item"><i>📚</i>资源</a>
+    <a href="support.html" class="tab-item"><i>❓</i>支持</a>
+    <a href="login.html" class="tab-item"><i>👤</i>我的</a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let currentDate = new Date();
+      let currentYear = currentDate.getFullYear();
+      let currentMonth = currentDate.getMonth();
+      
+      const calendarDays = document.getElementById('calendarDays');
+      const currentMonthYear = document.getElementById('currentMonthYear');
+      const prevYearBtn = document.getElementById('prevYear');
+      const prevMonthBtn = document.getElementById('prevMonth');
+      const nextMonthBtn = document.getElementById('nextMonth');
+      const nextYearBtn = document.getElementById('nextYear');
+      const monthEvents = document.getElementById('monthEvents');
+      
+      // 税务申报重要日期
+      const taxEvents = [
+        { date: '2025-04-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-04-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-05-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-05-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-06-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-06-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-07-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-07-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-08-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-08-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-09-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-09-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-10-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-10-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-11-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-11-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-12-15', title: '增值税申报截止', type: 'important' },
+        { date: '2025-12-20', title: '出口退税申报', type: 'normal' },
+        { date: '2025-12-31', title: '年度汇算清缴', type: 'important' },
+        { date: '2026-01-15', title: '增值税申报截止', type: 'important' },
+        { date: '2026-01-20', title: '出口退税申报', type: 'normal' }
+      ];
+      
+      // 渲染日历
+      function renderCalendar() {
+        calendarDays.innerHTML = '';
+        
+        // 设置月份标题
+        const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', 
+                           '7月', '8月', '9月', '10月', '11月', '12月'];
+        currentMonthYear.textContent = `${currentYear}年${monthNames[currentMonth]}`;
+        
+        // 获取当月第一天和最后一天
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        
+        // 获取当月第一天是星期几（0-6，0是周日）
+        const firstDayOfWeek = firstDay.getDay();
+        
+        // 获取当月总天数
+        const daysInMonth = lastDay.getDate();
+        
+        // 添加上个月的最后几天
+        const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day other-month';
+          dayElement.textContent = prevMonthLastDay - i;
+          calendarDays.appendChild(dayElement);
+        }
+        
+        // 添加当月日期
+        const today = new Date();
+        const isCurrentMonth = currentYear === today.getFullYear() && currentMonth === today.getMonth();
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day';
+          dayElement.innerHTML = `<span>${i}</span>`;
+          
+          // 检查是否是今天
+          if (isCurrentMonth && i === today.getDate()) {
+            dayElement.classList.add('today');
+          }
+          
+          // 检查是否有税务事件
+          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+          const event = taxEvents.find(e => e.date === dateStr);
+          
+          if (event) {
+            dayElement.classList.add('event');
+            if (event.type === 'important') {
+              dayElement.classList.add('important');
+            }
+            
+            // 添加事件点
+            const eventDot = document.createElement('div');
+            eventDot.className = `event-dot ${event.type === 'important' ? 'important' : 'normal'}`;
+            dayElement.appendChild(eventDot);
+            
+            // 添加点击事件显示详情
+            dayElement.addEventListener('click', function() {
+              alert(`日期: ${dateStr}\n事件: ${event.title}`);
+            });
+          }
+          
+          calendarDays.appendChild(dayElement);
+        }
+        
+        // 添加下个月的前几天，使日历完整
+        const totalCells = 42; // 6行x7列
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+        for (let i = 1; i <= remainingCells; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.className = 'calendar-day other-month';
+          dayElement.textContent = i;
+          calendarDays.appendChild(dayElement);
+        }
+        
+        // 更新当月事件列表
+        updateMonthEvents();
+      }
+      
+      // 更新当月事件列表
+      function updateMonthEvents() {
+        monthEvents.innerHTML = '';
+        
+        const monthEventsData = taxEvents.filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate.getFullYear() === currentYear && 
+                 eventDate.getMonth() === currentMonth;
+        });
+        
+        if (monthEventsData.length === 0) {
+          monthEvents.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">本月暂无申报事件</p>';
+          return;
+        }
+        
+        monthEventsData.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        monthEventsData.forEach(event => {
+          const eventDate = new Date(event.date);
+          const eventItem = document.createElement('div');
+          eventItem.className = `event-item ${event.type === 'important' ? 'important' : ''}`;
+          
+          eventItem.innerHTML = `
+            <div class="event-date">
+              <div class="event-day">${eventDate.getDate()}</div>
+              <div class="event-month">${eventDate.getMonth() + 1}月</div>
+            </div>
+            <div class="event-info">
+              <div class="event-title">${event.title}</div>
+              <div class="event-desc">${event.type === 'important' ? '重要申报节点，请及时完成' : '常规申报事项'}</div>
+            </div>
+          `;
+          
+          monthEvents.appendChild(eventItem);
+        });
+      }
+      
+      // 月份切换
+      prevMonthBtn.addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear--;
+        }
+        renderCalendar();
+      });
+      
+      nextMonthBtn.addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear++;
+        }
+        renderCalendar();
+      });
+      
+      // 年份切换
+      prevYearBtn.addEventListener('click', function() {
+        currentYear--;
+        renderCalendar();
+      });
+      
+      nextYearBtn.addEventListener('click', function() {
+        currentYear++;
+        renderCalendar();
+      });
+      
+      // 初始渲染日历
+      renderCalendar();
+    });
+  </script>
+</body>
+</html>
