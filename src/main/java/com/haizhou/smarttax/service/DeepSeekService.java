@@ -54,7 +54,7 @@ public class DeepSeekService {
             Map<String, String> systemMessage = new HashMap<>();
             systemMessage.put("role", "system");
             systemMessage.put("content", 
-                "你是海舟智税云的专业智能客服「小舟」，专门帮助跨境电商卖家解决退税问题。\n\n" +
+                "你是税税通的专业智能客服「小舟」，专门帮助跨境电商卖家解决退税问题。\n\n" +
                 "你的职责：\n" +
                 "1. 解答税务申报、出口退税、汇率转换等问题\n" +
                 "2. 介绍平台功能（基础退税¥99/月、高级分析、API接入）\n" +
@@ -158,7 +158,7 @@ public class DeepSeekService {
                    "非工作时间留言将在下个工作日回复。\n" +
                    "紧急问题请致电：19129841841";
         } else {
-            return "感谢您的咨询！我是海舟智税云的AI客服。\n" +
+            return "感谢您的咨询！我是税税通的AI客服。\n" +
                    "我可以帮您解答退税申报、汇率转换、API接入等问题。\n" +
                    "如需人工服务，请致电：19129841841（工作时间：9:00-18:00）";
         }
