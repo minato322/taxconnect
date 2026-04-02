@@ -220,15 +220,15 @@
       <div class="card-title">交易概览</div>
       <div class="data-summary">
         <div class="summary-item">
-          <div class="summary-value">10</div>
+          <div class="summary-value">33</div>
           <div class="summary-label">总交易数</div>
         </div>
         <div class="summary-item">
-          <div class="summary-value">USD 764.26</div>
+          <div class="summary-value">USD 1088.54</div>
           <div class="summary-label">总交易额</div>
         </div>
         <div class="summary-item">
-          <div class="summary-value">5</div>
+          <div class="summary-value">8</div>
           <div class="summary-label">不同支付方式</div>
         </div>
       </div>
@@ -242,6 +242,9 @@
           <option value="oct">2025年10月</option>
           <option value="nov">2025年11月</option>
           <option value="dec">2025年12月</option>
+          <option value="jan">2026年1月</option>
+          <option value="feb">2026年2月</option>
+          <option value="mar">2026年3月</option>
         </select>
         <select class="filter-select" id="paymentFilter">
           <option value="all">全部支付方式</option>
@@ -249,6 +252,9 @@
           <option value="PAYPAI">PAYPAI</option>
           <option value="INVOICE_WALLET">INVOICE_WALLET</option>
           <option value="GC_REAL_TIME_BANK_TRANSFER">GC_REAL_TIME_BANK_TRANSFER</option>
+          <option value="APPLE_PAY">APPLE_PAY</option>
+          <option value="CO_PAY">CO_PAY</option>
+          <option value="AFTERPAY">AFTERPAY</option>
         </select>
       </div>
       <input type="text" class="search-input" id="searchInput" placeholder="搜索买家、订单号...">
@@ -281,14 +287,14 @@
   </div>
 
   <div class="tab-bar">
-    <a href="index.html" class="tab-item"><i>🏠🏠</i>首页</a>
-    <a href="resources.html" class="tab-item"><i>📚📚</i>资源</a>
-    <a href="support.html" class="tab-item"><i>❓❓</i>支持</a>
-    <a href="user.html" class="tab-item"><i>👤👤</i>我的</a>
+    <a href="index.html" class="tab-item"><i>🏠🏠🏠🏠</i>首页</a>
+    <a href="resources.html" class="tab-item"><i>📚📚📚📚</i>资源</a>
+    <a href="support.html" class="tab-item"><i>❓❓❓❓</i>支持</a>
+    <a href="user.html" class="tab-item"><i>👤👤👤👤</i>我的</a>
   </div>
 
   <script>
-    // 交易数据
+    // 交易数据 - 合并了文档2中的所有数据
     const transactionData = [
       {
         date: "2025-10-28",
@@ -331,11 +337,27 @@
         status: "SETTLED BY MERCHANT"
       },
       {
-        date: "2025-12-11",
+        date: "2025-12-14",
         amount: "USD 21.50",
         orderNo: "15525588501049858",
         buyer: "stan stewart",
         paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-14",
+        amount: "USD 4.50",
+        orderNo: "285090087501022102",
+        buyer: "Prefina Maseleni",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2025-12-15",
+        amount: "USD 4.78",
+        orderNo: "285402951E01D28553",
+        buyer: "Yeonia Santos",
+        paymentMethod: "APPLE_PAY",
         status: "SETTLED_BY_MERCHANT"
       },
       {
@@ -347,12 +369,28 @@
         status: "SETTLED BY MERCHANT"
       },
       {
+        date: "2025-12-19",
+        amount: "USD 3.23",
+        orderNo: "285848991001029524",
+        buyer: "Malt Gustafson",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
         date: "2025-12-21",
         amount: "USD 16.20",
         orderNo: "286429530501020076",
         buyer: "Morasil Rasil",
         paymentMethod: "GC_REAL_TIME_BANK_TRANSFER",
         status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2025-12-22",
+        amount: "USD 2.42",
+        orderNo: "286444798501028511",
+        buyer: "nabyixing",
+        paymentMethod: "CO_PAY",
+        status: "SETTLED BY_MERCHANT"
       },
       {
         date: "2025-12-25",
@@ -368,6 +406,150 @@
         orderNo: "286448675001020586",
         buyer: "Sublime Campany",
         paymentMethod: "INVOICE WALLET",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-01-23",
+        amount: "USD 37.40",
+        orderNo: "290127956001020415",
+        buyer: "Elienne RUH",
+        paymentMethod: "APPLE_PAY",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-01-30",
+        amount: "USD 8.47",
+        orderNo: "290276999001021899",
+        buyer: "Marynel Linares",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_DY_MERCHANT"
+      },
+      {
+        date: "2026-01-31",
+        amount: "USD 20.00",
+        orderNo: "289681563501021473",
+        buyer: "Caleb Lwamba",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_DY_MERCHANT"
+      },
+      {
+        date: "2026-02-02",
+        amount: "USD 11.35",
+        orderNo: "283681563501021473",
+        buyer: "Caleb Lwamba",
+        paymentMethod: "INVOICE WALLET",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-02-03",
+        amount: "USD 27.10",
+        orderNo: "291329574001021921",
+        buyer: "Dicier Gloux",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-02-04",
+        amount: "USD 20.00",
+        orderNo: "291293782501025227",
+        buyer: "hoodo mysan",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-02-07",
+        amount: "USD 65.00",
+        orderNo: "291652385501024765",
+        buyer: "Jose Reyes",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_GY_MERCHANT"
+      },
+      {
+        date: "2026-03-03",
+        amount: "USD 14.10",
+        orderNo: "292908727501021035",
+        buyer: "Vimbai Gomhwe",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-10",
+        amount: "USD 40.04",
+        orderNo: "293995323001022660",
+        buyer: "Vida Ndifor",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-03-11",
+        amount: "USD 32.00",
+        orderNo: "294736494001022543",
+        buyer: "Domingas Canganjo",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-03-12",
+        amount: "USD 23.92",
+        orderNo: "293917623501026509",
+        buyer: "Said HuitronRomam",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-14",
+        amount: "USD 20.94",
+        orderNo: "294903910501028985",
+        buyer: "Tara Kamp",
+        paymentMethod: "PAYPAL",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-14",
+        amount: "USD 15.77",
+        orderNo: "294947610501026824",
+        buyer: "Adrini Oliveira",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-15",
+        amount: "USD 3.24",
+        orderNo: "294262663501021765",
+        buyer: "Sejad Naisan",
+        paymentMethod: "OTHER",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-03-15",
+        amount: "USD 11.86",
+        orderNo: "294507475001028478",
+        buyer: "grazia vherba",
+        paymentMethod: "PAYPAL",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-22",
+        amount: "USD 17.50",
+        orderNo: "21233276501046425",
+        buyer: "LinnIren TyrhaLg",
+        paymentMethod: "OTHER",
+        status: "SETTLED BY MERCHANT"
+      },
+      {
+        date: "2026-03-28",
+        amount: "USD 2.18",
+        orderNo: "296535378501029962",
+        buyer: "Maria Teresa Roncagliolo Higueras",
+        paymentMethod: "PAYCARD",
+        status: "SETTLED_BY_MERCHANT"
+      },
+      {
+        date: "2026-03-31",
+        amount: "USD 33.56",
+        orderNo: "29533959100102096D",
+        buyer: "Myma Reyes",
+        paymentMethod: "AFTERPAY",
         status: "SETTLED_BY_MERCHANT"
       }
     ];
@@ -486,10 +668,13 @@
       filteredData = transactionData.filter(transaction => {
         // 日期筛选
         if (dateFilter !== 'all') {
-          const month = transaction.date.split('-')[1];
-          if (dateFilter === 'oct' && month !== '10') return false;
-          if (dateFilter === 'nov' && month !== '11') return false;
-          if (dateFilter === 'dec' && month !== '12') return false;
+          const yearMonth = transaction.date.substring(0, 7);
+          if (dateFilter === 'oct' && yearMonth !== '2025-10') return false;
+          if (dateFilter === 'nov' && yearMonth !== '2025-11') return false;
+          if (dateFilter === 'dec' && yearMonth !== '2025-12') return false;
+          if (dateFilter === 'jan' && yearMonth !== '2026-01') return false;
+          if (dateFilter === 'feb' && yearMonth !== '2026-02') return false;
+          if (dateFilter === 'mar' && yearMonth !== '2026-03') return false;
         }
         
         // 支付方式筛选
