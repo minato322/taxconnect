@@ -11,7 +11,7 @@ public class SmartTaxApplication {
     public static void main(String[] args) {
         SpringApplication.run(SmartTaxApplication.class, args);
         System.out.println("===========================================");
-        System.out.println("    海舟智税云后端服务启动成功！");
+        System.out.println("    税税通后端服务启动成功！");
         System.out.println("    访问地址: cd D:\\website\\phone3\\phone\\backend");
         System.out.println("===========================================");
     }

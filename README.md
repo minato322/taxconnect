@@ -1,4 +1,4 @@
-# 海舟智税云后端服务
+# 税税通后端服务
 
 基于 Spring Boot + MyBatis 的智能税务管理系统后端。
 
@@ -253,4 +253,4 @@ POST /api/v1/apikey/validate?apiKey={key}
 
 ## 许可证
 
-Copyright © 2025 海舟智税云
+Copyright © 2025 税税通
